@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<link rel="stylesheet" href="static/css/styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Velha - Champions League</title>
+    <style>
+        table, td, tr {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+        td {
+            width: 100px;
+            height: 100px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        footer {
+            background: linear-gradient(135deg, #001a3a 0%, #003366 100%);
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-top: 2px solid #00bfff;
+            font-size: 14px;
+        }
+        footer a {
+            color: #00bfff;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        footer a:hover {
+            color: #fff;
+            text-shadow: 0 0 10px #00bfff;
+        }
+        footer i {
+            font-size: 20px;
+        }
+        .campeoes-btn {
+            background: linear-gradient(90deg, #ffd700 60%, #cc9900 100%);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .campeoes-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+        }
+        .campeoes-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9998;
+            justify-content: center;
+            align-items: center;
+        }
+        .campeoes-overlay.show {
+            display: flex;
+        }
+        .campeoes-modal {
+            background: linear-gradient(135deg, #001a3a 0%, #003366 100%);
+            border: 2px solid #ffd700;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            color: #fff;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+        .campeoes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 15px;
+        }
+        .campeoes-header h2 {
+            margin: 0;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+        }
+        .campeoes-header button {
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .campeoes-header button:hover {
+            background: #ff0000;
+            transform: scale(1.1);
+        }
+        .campeoes-tabela {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .campeoes-tabela thead {
+            background: rgba(0, 191, 255, 0.2);
+        }
+        .campeoes-tabela th {
+            padding: 12px;
+            text-align: left;
+            color: #ffd700;
+            border-bottom: 2px solid #ffd700;
+            font-weight: bold;
+        }
+        .campeoes-tabela td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            text-align: left;
+        }
+        .campeoes-tabela td:nth-child(2) {
+            padding: 15px;
+        }
+        .campeoes-tabela tr:hover {
+            background: rgba(0, 191, 255, 0.1);
+        }
+        .campeoes-tabela .rank {
+            font-weight: bold;
+            color: #ffd700;
+            text-align: center;
+        }
+        .campeoes-vazio {
+            text-align: center;
+            padding: 40px 20px;
+            color: #aaa;
+        }
+        .medals {
+            font-size: 20px;
+            display: inline-block;
+            width: 30px;
+        }
+        .historico-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(0, 191, 255, 0.3);
+            padding-bottom: 0;
+        }
+        .historico-tab-btn {
+            background: transparent;
+            color: #00bfff;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            position: relative;
+            bottom: -2px;
+        }
+        .historico-tab-btn:hover {
+            color: #fff;
+            border-bottom-color: #00bfff;
+        }
+        .historico-tab-btn.active {
+            color: #fff;
+            border-bottom-color: #ffd700;
+            text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+        }
+        .historico-tab-content {
+            display: none;
+        }
+        .historico-tab-content.active {
+            display: block;
+        }
+        .btn-reiniciar {
+            background: linear-gradient(135deg, #00bfff 0%, #0099cc 100%);
+            color: #001a3a;
+            border: 2px solid #fff;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 24px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 191, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-reiniciar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 191, 255, 0.5);
+            background: linear-gradient(135deg, #00d4ff 0%, #00aadd 100%);
+        }
+        .btn-reiniciar:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 191, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+  <div class="who-starts-group">
+      <label for="playerSelect">Quem começa: </label>
+      <select id="playerSelect" onchange="Game.setStartingPlayer(this.value)">
+          <option value="X"><i class="bi bi-house-door"></i> Mandante</option>
+          <option value="O"><i class="bi bi-airplane"></i> Visitante</option>
+      </select>
+  </div>
+  <div class="teams-container">
+      <div class="team-select-group">
+      <span class="team-icon" title="Mandante"><i class="bi bi-house-door"></i></span>
+      <label id="labelTeamX" for="teamX">Mandante (X): </label>
+      <select id="teamX" onchange="Game.setTeam('X', this.value)"></select>
+      <img id="imgX" class="team-img" style="display: none;" />
+      </div>
+      <div class="team-select-group">
+      <span class="team-icon" title="Visitante"><i class="bi bi-airplane"></i></span>
+      <label id="labelTeamO" for="teamO">Visitante (O): </label>
+      <select id="teamO" onchange="Game.setTeam('O', this.value)"></select>
+      <img id="imgO" class="team-img" style="display: none;" />
+      </div>
+  </div>
+  <div id="info"></div>
+  <table id="tabuleiro"></table>
+  <button id="btnReiniciar" class="btn-reiniciar">Reiniciar</button>
+</div>
+
+<!-- Modal de Histórico -->
+<div class="historico-overlay" id="historicoOverlay"></div>
+
+<footer>
+  <p>Desenvolvido por Renato Nunes. | 
+    <a href="https://github.com/rnz277" target="_blank">
+      <i class="bi bi-github"></i> GitHub
+    </a>
+  </p>
+</footer>
+
+  <!-- Confete -->
+    <!-- canvas-confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="static/js/scripts.js"></script>
+</body>
+</html>
